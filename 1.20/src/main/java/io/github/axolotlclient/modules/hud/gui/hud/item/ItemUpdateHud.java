@@ -182,7 +182,7 @@ public class ItemUpdateHud extends TextHudEntry {
 		removeM.add(Text.literal("[").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.getAsInt()))));
 		removeM.add(Text.literal("4").setStyle(Style.EMPTY.withColor(Formatting.WHITE)));
 		removeM.add(Text.literal("] ").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Color.DARK_GRAY.getAsInt()))));
-		removeM.add(new ItemStack(Items.GRASS).getName());
+		removeM.add(new ItemStack(Items.SHORT_GRASS).getName());
 		OrderedText removeText = Language.getInstance().reorder(removeM.getCombined());
 		graphics.drawText(client.textRenderer, removeText, pos.x(),
 			pos.y() + client.textRenderer.fontHeight + 2, Formatting.RED.getColorValue(), shadow.get());

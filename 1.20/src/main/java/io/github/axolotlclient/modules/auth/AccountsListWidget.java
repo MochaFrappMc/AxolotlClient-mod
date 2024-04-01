@@ -38,7 +38,7 @@ public class AccountsListWidget extends AlwaysSelectedEntryListWidget<AccountsLi
 	private final AccountsScreen screen;
 
 	public AccountsListWidget(AccountsScreen screen, MinecraftClient client, int width, int height, int top, int bottom, int entryHeight) {
-		super(client, width, height, top, bottom, entryHeight);
+		super(client, width, bottom-top, top, entryHeight);
 		this.screen = screen;
 	}
 

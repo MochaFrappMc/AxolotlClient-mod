@@ -173,8 +173,7 @@ public abstract class PlayerListHudMixin {
 	)
 	public void axolotlclient$renderWithoutObjective(
 		GuiGraphics graphics, int scaledWindowWidth, Scoreboard scoreboard, @Nullable ScoreboardObjective objective, CallbackInfo ci,
-		List list, int i, int j, int l, int m, int k,
-		boolean bl, int n, int o, int p, int q, int r, List list2, int t, int u, int s, int v, int y, int z, PlayerListEntry playerListEntry2
+		List list, List list3, int i, int j, int l, int m, int k, int x, boolean bl, int n, int o, int p, int q, int r, List list2, int t, int u, int s, int v, int y, int z, PlayerListEntry playerListEntry2
 	) {
 		if (!BedwarsMod.getInstance().isEnabled() || !BedwarsMod.getInstance().isWaiting()) {
 			return;
@@ -205,12 +204,12 @@ public abstract class PlayerListHudMixin {
 		method = "renderScoreboardObjective",
 		at = @At(
 			value = "INVOKE",
-			target = "Lnet/minecraft/client/gui/GuiGraphics;drawShadowedText(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)I"
+			target = "Lnet/minecraft/client/gui/GuiGraphics;drawShadowedText(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;III)I"
 		),
 		cancellable = true
 	)
 	private void axolotlclient$renderCustomScoreboardObjective(
-		ScoreboardObjective objective, int y, String player, int startX, int endX, UUID uuid, GuiGraphics graphics, CallbackInfo ci
+		ScoreboardObjective objective, int y, PlayerListHud.C_hyyqqfbu c_hyyqqfbu, int startX, int endX, UUID uuid, GuiGraphics graphics, CallbackInfo ci
 	) {
 		if (!BedwarsMod.getInstance().isEnabled()) {
 			return;

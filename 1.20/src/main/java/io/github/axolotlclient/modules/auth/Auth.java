@@ -40,8 +40,8 @@ import io.github.axolotlclient.modules.Module;
 import io.github.axolotlclient.util.Logger;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.multiplayer.report.ReportEnvironment;
-import net.minecraft.client.multiplayer.report.chat.ChatReportingContext;
+import net.minecraft.client.multiplayer.report.AbuseReportEnvironment;
+import net.minecraft.client.multiplayer.report.AbuseReportContext;
 import net.minecraft.client.network.SocialInteractionsManager;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.toast.SystemToast;
@@ -103,18 +103,18 @@ public class Auth extends Accounts implements Module {
 				((MinecraftClientAccessor) client).setUserApiService(service);
 				((MinecraftClientAccessor) client).setSocialInteractionsManager(new SocialInteractionsManager(client, service));
 				((MinecraftClientAccessor) client).setPlayerKeyPairManager(PlayerKeyPairManager.create(service, client.getSession(), client.runDirectory.toPath()));
-				((MinecraftClientAccessor) client).setChatReportingContext(ChatReportingContext.create(ReportEnvironment.createLocal(), service));
+				((MinecraftClientAccessor) client).setChatReportingContext(AbuseReportContext.create(AbuseReportEnvironment.createLocal(), service));
 				save();
 				current = account;
-				client.getToastManager().add(new SystemToast(SystemToast.Type.TUTORIAL_HINT, Text.translatable("auth.notif.title"), Text.translatable("auth.notif.login.successful", (Object) current.getName())));
-			} catch (AuthenticationException e) {
+				client.getToastManager().add(new SystemToast(SystemToast.C_ozahoshp.field_47586, Text.translatable("auth.notif.title"), Text.translatable("auth.notif.login.successful", (Object) current.getName())));
+			} catch (Exception e) {
 				e.printStackTrace();
-				client.getToastManager().add(new SystemToast(SystemToast.Type.TUTORIAL_HINT, Text.translatable("auth.notif.title"), Text.translatable("auth.notif.login.failed")));
+				client.getToastManager().add(new SystemToast(SystemToast.C_ozahoshp.field_47586, Text.translatable("auth.notif.title"), Text.translatable("auth.notif.login.failed")));
 			}
 		};
 
 		if (account.isExpired() && !account.isOffline()) {
-			client.getToastManager().add(new SystemToast(SystemToast.Type.TUTORIAL_HINT, Text.translatable("auth.notif.title"), Text.translatable("auth.notif.refreshing", (Object) account.getName())));
+			client.getToastManager().add(new SystemToast(SystemToast.C_ozahoshp.field_47586, Text.translatable("auth.notif.title"), Text.translatable("auth.notif.refreshing", (Object) account.getName())));
 			account.refresh(auth, runnable);
 		} else {
 			runnable.run();
