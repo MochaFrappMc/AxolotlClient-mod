@@ -113,6 +113,8 @@ public class HudManager extends AbstractModule {
 		add(new MouseMovementHud());
 		add(new DebugCountersHud());
 		add(new DayCounterHud());
+    add(new StatusBarHud());
+		add(new StatusNumberHud());		
 		entries.put(BedwarsMod.getInstance().getUpgradesOverlay().getId(), BedwarsMod.getInstance().getUpgradesOverlay());
 		entries.put(BedwarsMod.getInstance().getResourceOverlay().getId(), BedwarsMod.getInstance().getResourceOverlay());
 

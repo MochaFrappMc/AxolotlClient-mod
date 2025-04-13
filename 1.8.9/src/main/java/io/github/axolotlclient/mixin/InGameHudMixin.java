@@ -27,6 +27,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import io.github.axolotlclient.AxolotlClient;
 import io.github.axolotlclient.modules.hud.HudManager;
 import io.github.axolotlclient.modules.hud.gui.hud.vanilla.*;
+import io.github.axolotlclient.modules.hud.gui.hud.StatusBarHud;
 import io.github.axolotlclient.modules.hypixel.bedwars.BedwarsMod;
 import io.github.axolotlclient.util.Util;
 import io.github.axolotlclient.util.events.Events;
@@ -54,6 +55,18 @@ public abstract class InGameHudMixin {
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/GlStateManager;color4f(FFFF)V", ordinal = 0))
 	private void axolotlclient$onHudRender(float tickDelta, CallbackInfo ci) {
 		HudManager.getInstance().render(Minecraft.getInstance(), tickDelta);
+	}
+
+@Unique
+	private static final Entity axolotlclient$noPlayerStats = new RideableMinecartEntity(null);
+
+	@Unique
+	public Entity axolotlclient$disableHealth(Entity normal) {
+		StatusBarHud hud = (StatusBarHud) HudManager.getInstance().get(StatusBarHud.ID);
+		if (hud.isEnabled()) {
+			return axolotlclient$noPlayerStats;
+		}
+		return normal;
 	}
 
 	@Inject(method = "renderScoreboardObjective", at = @At("HEAD"), cancellable = true)
@@ -225,6 +238,14 @@ public abstract class InGameHudMixin {
 			return;
 		}
 		GlStateManager.scalef(subtitleScale, subtitleScale, 1);
+	}
+
+@Inject(method = "renderStatusBars", at = @At("HEAD"), cancellable = true)
+	public void setaxolotlclient$noPlayerStats(CallbackInfo ci) {
+		StatusBarHud hud = (StatusBarHud) HudManager.getInstance().get(StatusBarHud.ID);
+		if (hud.isEnabled()) {
+			ci.cancel();
+		}
 	}
 
 	@Inject(method = "setTitles", at = @At("HEAD"))

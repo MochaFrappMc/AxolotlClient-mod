@@ -390,6 +390,8 @@
 	"sprintToggled": "Sprinting currently toggled",
 	"sprinting_pressed": "Sprinting [Key held]",
 	"sprinting_toggled": "Sprinting [Toggled]",
+  "statusbarhud": "Status Bar Hud",
+	"statusnumberhud": "Status Number Hud",
 	"strength": "Strength",
 	"tablist": "Tablist",
 	"text": "Text",
