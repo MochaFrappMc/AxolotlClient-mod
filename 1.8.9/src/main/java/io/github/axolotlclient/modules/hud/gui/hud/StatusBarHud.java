@@ -66,7 +66,7 @@ public class StatusBarHud extends TextHudEntry implements DynamicallyPositionabl
 
 	public StatusBarHud() {
 		super(90, 18, true);
-	}r
+	}
 
 	@Override
 	public void renderComponent(float delta) {
