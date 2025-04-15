@@ -68,24 +68,44 @@ public class StatusBarHud extends TextHudEntry implements DynamicallyPositionabl
 		super(90, 18, true);
 	}
 
+	private static String toMiB(long bytes) {
+		return (bytes / 1024L / 1024L) + "MiB";
+	}
+
 	@Override
 	public void renderComponent(float delta) {
 		DrawPosition pos = getPos();
 
-		graph.setData(pos.x + 5, pos.y + 5, getBounds().width - 10, getBounds().height - 10);
+		if (showGraph.get()) {
+			graph.setData(pos.x + 5, pos.y + 5, getBounds().width - 10, getBounds().height - 10);
 
-		float absorption = client.player.getAbsorption();
-		float maxAbsorption = 20;
-		float health = client.player.getHealth();
-		float maxHealth = client.player.getMaxHealth();
-		float healthUsage = health / maxHealth;
+			float absorption = client.player.getAbsorption();
+			float maxAbsorption = 20;
+			float health = client.player.getHealth();
+			float maxHealth = client.player.getMaxHealth();
+			float healthUsage = health / maxHealth;
 
-		fill(graph.x, graph.y, (int) (graph.x + graph.width * healthUsage), graph.y + graph.height, graphUsedColor.get().toInt());
-		fill((int) (graph.x + graph.width * healthUsage), graph.y, graph.x + graph.width, graph.y + graph.height, graphFreeColor.get().toInt());
+			fill(graph.x, graph.y, (int) (graph.x + graph.width * healthUsage), graph.y + graph.height, graphUsedColor.get().toInt());
+			fill((int) (graph.x + graph.width * healthUsage), graph.y, graph.x + graph.width, graph.y + graph.height, graphFreeColor.get().toInt());
 
-		if (absorption > 0) {
-			fill(graph.x, graph.y, (int) (graph.x + graph.width * (absorption / maxAbsorption)), graph.y + graph.height,
-				ClientColors.GOLD.withAlpha(255).toInt());
+			if (absorption > 0) {
+				fill(graph.x, graph.y, (int) (graph.x + graph.width * (absorption / maxAbsorption)), graph.y + graph.height,
+					ClientColors.GOLD.withAlpha(255).toInt());
+			}
+
+		}
+
+		if (showText.get()) {
+			String mem = getMemoryLine();
+			drawString(mem, pos.x + justification.get().getXOffset(client.textRenderer.getWidth(mem), getWidth() - 4) - 22,
+				pos.y + (Math.round((float) height / 2) - 9) - (showAllocated.get() ? 4 : 0), // height / 2 ) - 4
+				textColor.get().toInt(), shadow.get());
+
+			if (showAllocated.get()) {
+				String alloc = getAllocationLine();
+				drawString(alloc, pos.x + justification.get().getXOffset(client.textRenderer.getWidth(alloc), getWidth() - 4) + 2, pos.y + (Math.round((float) height / 2) - 4) + 4,
+					textColor.get().toInt(), shadow.get());
+			}
 		}
 	}
 
@@ -93,19 +113,33 @@ public class StatusBarHud extends TextHudEntry implements DynamicallyPositionabl
 	public void renderPlaceholderComponent(float delta) {
 		DrawPosition pos = getPos();
 
-		graph.setData(pos.x + 5, pos.y + 5, getBounds().width - 10, getBounds().height - 10);
+		if (showGraph.get()) {
+			graph.setData(pos.x + 5, pos.y + 5, getBounds().width - 10, getBounds().height - 10);
 
-		float absorption = 10;
-		float maxAbsorption = 20;
-		float health = 10;
-		float maxHealth = 20;
-		float healthUsage = health / maxHealth;
+			fill(graph.x, graph.y, (int) (graph.x + graph.width * (0.9)), graph.y + graph.height,
+				graphUsedColor.get().toInt());
+			fill((int) (graph.x + graph.width * (0.9)), graph.y, graph.x + graph.width, graph.y + graph.height,
+				graphFreeColor.get().toInt());
+		}
 
-		fill(graph.x, graph.y, (int) (graph.x + graph.width * healthUsage), graph.y + graph.height, graphUsedColor.get().toInt());
-		fill((int) (graph.x + graph.width * healthUsage), graph.y, graph.x + graph.width, graph.y + graph.height, graphFreeColor.get().toInt());
+		if (showText.get()) {
+			String mem = "18/20";
+			drawString(mem, pos.x + justification.get().getXOffset(client.textRenderer.getWidth(mem), getWidth() - 4) - 22,
+				pos.y + (Math.round((float) height / 2) - 9) - (showAllocated.get() ? 4 : 0), ClientColors.WHITE,
+				shadow.get());
+			if (showAllocated.get()) {
+				String alloc = I18n.translate("18") + ": 20";
+				drawString(alloc, pos.x + justification.get().getXOffset(client.textRenderer.getWidth(alloc), getWidth() - 4) + 2,
+					pos.y + (Math.round((float) height / 2) - 4) + 4, textColor.get(), shadow.get());
+			}
+		}
 
-		fill(graph.x, graph.y, (int) (graph.x + graph.width * (absorption / maxAbsorption)), graph.y + graph.height,
-			ClientColors.GOLD.withAlpha(255).toInt());
+		if (!showGraph.get() && !showText.get()) {
+			String value = I18n.translate(ID.getPath());
+			drawString(value, pos.x + justification.get().getXOffset(client.textRenderer.getWidth(value), getWidth() - 4) + 2,
+				pos.y + (Math.round((float) height / 2) - 4), ClientColors.WHITE,
+				shadow.get());
+		}
 	}
 
 	@Override
@@ -114,20 +148,28 @@ public class StatusBarHud extends TextHudEntry implements DynamicallyPositionabl
 	}
 
 	private float getUsage() {
-		float health = client.player.getHealth();
-		float maxHealth = client.player.getMaxHealth();
-		return health / maxHealth;
+		int max = (int) client.player.getMaxHealth(); // max
+		int current = (int) client.player.getHealth(); // current
+
+		return (float) current / max; // return as float used / max percentage
 	}
 
-	private String getHealthLine() {
-		float health = client.player.getHealth();
-		float maxHealth = client.player.getMaxHealth();
-		return String.format("%.0f/%.0f (%.0f%%)", health, maxHealth, (health / maxHealth) * 100);
+	private String getMemoryLine() {
+		int currentHealth = (int) client.player.getHealth();
+		int maxHealth = (int) client.player.getMaxHealth();
+
+		float absorption = client.player.getAbsorption();
+		float totalHealth = currentHealth + absorption;
+
+		String formattedHealth = (totalHealth % 1 == 0) ? String.format("%.0f", totalHealth) : String.format("%.1f", totalHealth);
+
+		return formattedHealth + "/" + maxHealth;
 	}
 
-	private String getHealthInfoLine() {
-		float health = client.player.getHealth();
-		return "Health: " + String.format("%.0f", health);
+	private String getAllocationLine() {
+		long total = Runtime.getRuntime().totalMemory();
+
+		return I18n.translate("allocated") + ": " + toMiB(total);
 	}
 
 	@Override
