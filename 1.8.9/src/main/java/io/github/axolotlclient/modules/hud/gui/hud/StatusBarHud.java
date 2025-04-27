@@ -89,7 +89,7 @@ public class StatusBarHud extends TextHudEntry implements DynamicallyPositionabl
 			float health = client.player.getHealth();
 			float currentHealth = client.player.getHealth();
 			float maxHealth = client.player.getMaxHealth();
-			float lerpSpeed = 0.1f;
+			float lerpSpeed = 0.05f;
 
 			smoothedHealth += (currentHealth - smoothedHealth) * lerpSpeed;
 
@@ -98,7 +98,7 @@ public class StatusBarHud extends TextHudEntry implements DynamicallyPositionabl
 
 			fill((int) (graph.x + graph.width * healthUsage), graph.y, graph.x + graph.width, graph.y + graph.height, backgroundBarColor.get().toInt());
 			fill(graph.x, graph.y, (int) (graph.x + graph.width * delayedHealthNormalized), graph.y + graph.height, ClientColors.WHITE.withAlpha(255).toInt());
-			fill(graph.x, graph.y, (int) (graph.x + graph.width * healthUsage), graph.y + graph.height, ClientColors.SELECTOR_RED.get().toInt());
+			fill(graph.x, graph.y, (int) (graph.x + graph.width * healthUsage), graph.y + graph.height, healthbarColor.get().toInt());
 
 			if (absorption > 0) {
 				fill(graph.x, graph.y, (int) (graph.x + graph.width * (absorption / maxAbsorption)), graph.y + graph.height,
@@ -152,7 +152,7 @@ public class StatusBarHud extends TextHudEntry implements DynamicallyPositionabl
 					breathColor.get().toInt());
 
 				fill(graph.x, graph.y, (int) (graph.x + graph.width * ((300 - currentBreath) / maxBreath)), graph.y + graph.height,
-					ClientColors.BLACK.withAlpha(255).toInt());
+					backgroundBarColor.get().toInt());
 			}
 		}
 
@@ -171,7 +171,7 @@ public class StatusBarHud extends TextHudEntry implements DynamicallyPositionabl
 			String formattedHealth = (totalHealth % 1 == 0) ? String.format("%.0f", totalHealth) : String.format("%.1f", totalHealth);
 			String armor = String.valueOf(client.player.getArmorProtection());
 
-			drawString((formattedHealth + "/" + maxHealth), pos.x + justification.get().getXOffset(client.textRenderer.getWidth(health), getWidth() - 4) - 22,
+			drawString((formattedHealth + "/" + maxHealth), pos.x + justification.get().getXOffset(client.textRenderer.getWidth(armor), getWidth() - 4) - 26,
 				pos.y + (Math.round((float) height / 2) - 4) - (showAllocated.get() ? 4 : 0),
 				textColor.get().toInt(), shadow.get());
 
@@ -181,12 +181,12 @@ public class StatusBarHud extends TextHudEntry implements DynamicallyPositionabl
 					textColor.get().toInt(), shadow.get());
 			}
 
-			drawString((currentHunger + "/" + 20), pos.x + justification.get().getXOffset(client.textRenderer.getWidth(health), getWidth() - 4) + 114,
+			drawString((currentHunger + "/" + 20), pos.x + justification.get().getXOffset(client.textRenderer.getWidth((char) maxHealth), getWidth() - 4) + 114,
 				pos.y + (Math.round((float) height / 2) - 4) - (showAllocated.get() ? 4 : 0),
 				textColor.get().toInt(), shadow.get());
 
 			if (currentBreath < 300) {
-				drawString(String.valueOf((breathPercentage + "%")), pos.x + justification.get().getXOffset(client.textRenderer.getWidth(health), getWidth() - 4) + 126,
+				drawString(String.valueOf((breathPercentage + "%")), pos.x + justification.get().getXOffset(client.textRenderer.getWidth((char) maxHealth), getWidth() - 4) + 126,
 					pos.y + (Math.round((float) height / 2) - 14) - (showAllocated.get() ? 4 : 0),
 					textColor.get().toInt(), shadow.get());
 			}
